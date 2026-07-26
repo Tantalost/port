@@ -1,0 +1,160 @@
+@import './tokens.css';
+
+/* ---------- reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img, video, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+a { color: inherit; }
+
+/* Inverse selection is free thematic mileage - it's literally how a
+   terminal shows selected text. */
+::selection { background: var(--inv-bg); color: var(--inv-fg); }
+
+:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+/* ---------- CRT ground ----------
+   Scanlines at 3px pitch, plus a faint character grid. Both are
+   deliberately near-invisible; you should feel the texture without
+   being able to point at it. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.28) 0px,
+    rgba(0, 0, 0, 0.28) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.5;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 128px 128px;
+  opacity: 0.5;
+  mask-image: radial-gradient(120% 85% at 50% 0%, #000 15%, transparent 100%);
+}
+
+/* ---------- smooth scroll plumbing ---------- */
+.scroll-wrapper {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 1;
+}
+.scroll-wrapper.native { position: static; overflow: visible; }
+.scroll-content { will-change: transform; }
+.scroll-wrapper.native .scroll-content { will-change: auto; }
+
+/* Locked while the watchdog overlay is up. */
+body.booting { overflow: hidden; }
+
+/* ---------- layout ---------- */
+.sheet {
+  padding-left: calc(var(--rail) + var(--gutter));
+  padding-right: var(--gutter);
+  max-width: 1440px;
+}
+
+.section { padding-block: var(--section-gap); }
+.measure { max-width: var(--measure); }
+
+/* ---------- typography ----------
+   All one family. Hierarchy comes from size, weight, tracking and
+   case - never from colour. */
+.eyebrow {
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.h-display {
+  font-size: var(--step-3);
+  font-weight: 600;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.h-section {
+  font-size: var(--step-2);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.lede {
+  font-size: var(--step-1);
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+.dim { color: var(--dim); }
+.faint { color: var(--faint); }
+
+/* The one emphasis device. */
+.inv {
+  background: var(--inv-bg);
+  color: var(--inv-fg);
+  padding: 0.05em 0.35em;
+}
+
+/* ---------- scroll reveal ---------- */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition:
+    opacity var(--dur) var(--ease-out),
+    transform var(--dur) var(--ease-out);
+}
+.reveal.is-revealed { opacity: 1; transform: none; }
+
+.reveal[data-reveal='stroke'] {
+  clip-path: inset(0 100% 0 0);
+  transform: none;
+  transition:
+    opacity var(--dur) var(--ease-out),
+    clip-path 850ms var(--ease-out);
+}
+.reveal[data-reveal='stroke'].is-revealed { clip-path: inset(0 0 0 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; clip-path: none; }
+  body::before { display: none; }
+}

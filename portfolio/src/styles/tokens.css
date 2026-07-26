@@ -1,0 +1,52 @@
+/* ============================================================
+   Design tokens
+   Direction: text-mode terminal. No hue anywhere. A real terminal
+   has exactly four emphasis attributes - bold, dim, inverse,
+   underline - so this page builds its entire hierarchy from those
+   instead of from colour.
+   ============================================================ */
+
+:root {
+  /* --- value scale (there is no palette, only luminance) ---- */
+  --bg: #050505;
+  --bg-2: #0d0d0d;
+  --bg-3: #171717;
+  --fg: #ededed;          /* phosphor */
+  --dim: #8a8a8a;         /* ANSI dim */
+  --faint: #4a4a4a;       /* annotations, inactive */
+  --rule: rgba(237, 237, 237, 0.13);
+  --rule-strong: rgba(237, 237, 237, 0.30);
+
+  /* Inverse is THE emphasis device. Used sparingly - it should feel
+     like the cursor block landed on something. */
+  --inv-bg: #ededed;
+  --inv-fg: #050505;
+
+  /* --- type ------------------------------------------------- */
+  /* One family for the whole system, the way a terminal has one.
+     VT323 appears only inside the watchdog overlay, because that
+     layer is meant to read as firmware sitting below the site. */
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --boot: 'VT323', var(--mono);
+
+  --step--1: clamp(0.70rem, 0.68rem + 0.1vw, 0.76rem);
+  --step-0: clamp(0.85rem, 0.82rem + 0.15vw, 0.95rem);
+  --step-1: clamp(1.05rem, 0.95rem + 0.4vw, 1.30rem);
+  --step-2: clamp(1.40rem, 1.15rem + 1.2vw, 2.20rem);
+  --step-3: clamp(2.00rem, 1.40rem + 2.9vw, 4.20rem);
+
+  /* --- layout ----------------------------------------------- */
+  --rail: 4.5rem;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  --measure: 64ch;
+  --section-gap: clamp(6rem, 14vh, 11rem);
+
+  /* --- motion ----------------------------------------------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 160ms;
+  --dur: 600ms;
+}
+
+@media (max-width: 720px) {
+  :root { --rail: 2.5rem; }
+}
